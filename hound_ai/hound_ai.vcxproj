@@ -111,14 +111,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DLL_injector.cpp" />
+    <ClCompile Include="DLL_injector_lib.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Win_err_parse.cpp" />
+    <ClCompile Include="Win_err_parse_lib.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DLL_injector.h" />
+    <ClInclude Include="DLL_injector_lib.h" />
     <ClInclude Include="main.h" />
-    <ClInclude Include="Win_err_parse.h" />
+    <ClInclude Include="Win_err_parse_lib.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
