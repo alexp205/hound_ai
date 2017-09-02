@@ -6,6 +6,40 @@ wchar_t create_proc_command[256] = TEXT("C:\\Users\\ap\\Documents\\Games\\Emulat
 STARTUPINFO si;
 PROCESS_INFORMATION pi;
 
+//Usage:
+// - 0 = success (no errors), follow standard exit procedures
+// - any other integer = error, execute error procedures before exit (if possible)
+bool onExit(int exit_status)
+{
+	int exit_code;
+	if (exit_status == 0) {
+		exit_code = 0;
+	}
+	else {
+		exit_code = -1;
+	}
+
+	switch (exit_code) {
+	case 0: 
+		//TODO: success procedure here
+		break;
+	case -1: 
+		//TODO: error procedure here
+		break;
+	}
+
+	return exit_code;
+}
+
+bool initLogger()
+{
+	bool init_success;
+
+	//TODO: setup logger here (source: http://www.drdobbs.com/cpp/logging-in-c/201804215?pgno=1)
+
+	return init_success;
+}
+
 bool mainSetup()
 {
 	ZeroMemory(&si, sizeof(si));
@@ -43,7 +77,7 @@ int main()
 		std::wcout << L"Failed Dolphin setup with error code: " << err;
 		std::wstring err_msg = parseWinError(err);
 		std::wcout << " " << err_msg << std::endl;
-		return -1;
+		return onExit(-1);
 	}
 	DWORD pid = pi.dwProcessId;
 
@@ -57,16 +91,16 @@ int main()
 	setupInject(L"hound_DLL.dll", L"Dolphin.exe", pid, pe32, hproc_snap);
 
 	//access mapped file
-	std::wstring mapfile_name = L"Global\\HoundAIMap";
+	std::wstring mapfile_name = L"hound_DLL_file_map";
 	HANDLE hmapfile = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, mapfile_name.c_str());
 	if (hmapfile == NULL) {
 		std::wcout << L"Failed opening mapped file: " << parseWinError(GetLastError()) << std::endl;
-		return -1;
+		return onExit(-1);
 	}
 	LPCWSTR mapbuf = (LPCWSTR) MapViewOfFile(hmapfile, FILE_MAP_ALL_ACCESS, 0, 0, 256);
 	if (mapbuf == NULL) {
 		std::wcout << L"Failed accessing view of mapped file: " << parseWinError(GetLastError()) << std::endl;
-		return -1;
+		return onExit(-1);
 	}
 
 	//setup named pipes
@@ -74,5 +108,5 @@ int main()
 
 	//TODO: continue
 
-	return 0;
+	return onExit(0);
 }
