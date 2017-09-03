@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef _HOUND_LOGGER_H_
-#define _HOUND_LOGGER_H_
+#ifndef HOUND_LOGGER_H_
+#define HOUND_LOGGER_H_
 
 #include <iostream>
 
@@ -10,6 +10,7 @@ class houndLogger {
 
 public:
 	houndLogger(int type);
+	~houndLogger();
 	void switchOutput(int type);
 	bool logAlways(std::wstring text);
 	bool logError(std::wstring text);
@@ -18,6 +19,6 @@ public:
 	bool logDebug(std::wstring text);
 };
 
-static houndLogger logger;
+extern houndLogger logger;
 
 #endif

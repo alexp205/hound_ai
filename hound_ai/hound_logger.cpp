@@ -8,6 +8,7 @@ Usage:
   NOTE: Always, Error, and Alarm modes always also right to console (stdout)
 */
 int output_type;
+houndLogger logger(0);
 
 //constructor
 houndLogger::houndLogger(int type)
@@ -24,12 +25,16 @@ houndLogger::houndLogger(int type)
 	}
 }
 
-void switchOutput(int type)
+houndLogger::~houndLogger()
+{
+}
+
+void houndLogger::switchOutput(int type)
 {
 	output_type = type;
 }
 
-bool logAlways(std::wstring text)
+bool houndLogger::logAlways(std::wstring text)
 {
 	bool success;
 
@@ -38,7 +43,7 @@ bool logAlways(std::wstring text)
 	return success;
 }
 
-bool logError(std::wstring text)
+bool houndLogger::logError(std::wstring text)
 {
 	bool success;
 
@@ -47,7 +52,7 @@ bool logError(std::wstring text)
 	return success;
 }
 
-bool logAlarm(std::wstring text)
+bool houndLogger::logAlarm(std::wstring text)
 {
 	bool success;
 
@@ -56,7 +61,7 @@ bool logAlarm(std::wstring text)
 	return success;
 }
 
-bool logInfo(std::wstring text)
+bool houndLogger::logInfo(std::wstring text)
 {
 	bool success;
 
@@ -65,7 +70,7 @@ bool logInfo(std::wstring text)
 	return success;
 }
 
-bool logDebug(std::wstring text)
+bool houndLogger::logDebug(std::wstring text)
 {
 	bool success;
 
