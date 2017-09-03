@@ -18,10 +18,13 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DLL_injector_lib.cpp">
+    <ClCompile Include="hound_logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Win_err_parse_lib.cpp">
+    <ClCompile Include="hound_DLL_injector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hound_Win_err_parse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,10 +32,13 @@
     <ClInclude Include="main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DLL_injector_lib.h">
+    <ClInclude Include="hound_DLL_injector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Win_err_parse_lib.h">
+    <ClInclude Include="hound_Win_err_parse.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="hound_logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
