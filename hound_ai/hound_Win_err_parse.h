@@ -6,6 +6,7 @@
 #include <Windows.h>
 #include <string>
 #include <iostream>
+#include "hound_logger.h"
 
 std::wstring parseWinError(DWORD last_err_code);
 

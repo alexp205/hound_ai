@@ -12,8 +12,9 @@ typedef HINSTANCE(*fpLoadLibrary)(char*);
 void setupInject(wchar_t* DLL_file, wchar_t* proc, DWORD proc_id, PROCESSENTRY32 pe32, HANDLE hproc_snapshot)
 {
 	while (!proc_id) {
-		wcout << L"Searching for " << proc_name << L"..." << endl;
-		wcout << L"Make sure process is running" << endl;
+		wstring proc_name_str(proc_name);
+		logger.logInfo(L"Searching for " + proc_name_str + L"...");
+		logger.logInfo(L"Make sure process is running");
 
 		if (Process32First(hproc_snapshot, &pe32)) {
 			do {
@@ -28,12 +29,12 @@ void setupInject(wchar_t* DLL_file, wchar_t* proc, DWORD proc_id, PROCESSENTRY32
 
 	while (!InjectDLL(DLL_file, proc_id))
 	{
-		wcout << L"DLL failed to inject" << endl;
+		logger.logError(L"DLL failed to inject");
 		Sleep(1000);
 	}
 
-	wcout << L"DLL injected successfully" << endl << endl;
-	wcout << L"Closing injector in 5 seconds" << endl;
+	logger.logInfo(L"DLL injected successfully\n");
+	logger.logInfo(L"Closing injector in 5 seconds");
 }
 
 bool InjectDLL(wchar_t* DLL_file, DWORD proc_id)

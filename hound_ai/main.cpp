@@ -57,9 +57,7 @@ bool mainSetup()
 	CloseHandle(pi.hProcess);
 	CloseHandle(pi.hThread);
 
-	//instantiate logger
-	//change behavior here (*see hound_logger class file for details)
-	//houndLogger logger (0);
+	logger.initLogger();
 
 	return true;
 }
