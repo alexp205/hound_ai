@@ -116,7 +116,7 @@ int main()
 		std::wstring log_msg = L"Standard exception: " + exception_msg;
 		logger.logAlarm(log_msg);
 
-		onExit(-1);
+		return onExit(-1);
 	}
 
 	return onExit(0);
