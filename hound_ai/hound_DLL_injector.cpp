@@ -13,8 +13,8 @@ void setupInject(wchar_t* DLL_file, wchar_t* proc, DWORD proc_id, PROCESSENTRY32
 {
 	while (!proc_id) {
 		wstring proc_name_str(proc_name);
-		logger.logInfo(L"Searching for " + proc_name_str + L"...");
-		logger.logInfo(L"Make sure process is running");
+		logger.logInfo(wstring(L"Searching for " + proc_name_str + L"..."));
+		logger.logInfo(wstring(L"Make sure process is running"));
 
 		if (Process32First(hproc_snapshot, &pe32)) {
 			do {
@@ -29,12 +29,12 @@ void setupInject(wchar_t* DLL_file, wchar_t* proc, DWORD proc_id, PROCESSENTRY32
 
 	while (!InjectDLL(DLL_file, proc_id))
 	{
-		logger.logError(L"DLL failed to inject");
+		logger.logError(wstring(L"DLL failed to inject"));
 		Sleep(1000);
 	}
 
-	logger.logInfo(L"DLL injected successfully\n");
-	logger.logInfo(L"Closing injector in 5 seconds");
+	logger.logInfo(wstring(L"DLL injected successfully\n"));
+	logger.logInfo(wstring(L"Closing injector in 5 seconds"));
 }
 
 bool InjectDLL(wchar_t* DLL_file, DWORD proc_id)

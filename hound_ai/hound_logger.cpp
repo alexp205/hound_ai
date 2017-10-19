@@ -10,6 +10,7 @@ Usage:
 wchar_t log_file_path[256] = L"C:\\Users\\ap\\Documents\\Projects\\Programs\\logs\\";
 int output_type;
 std::wofstream log_file;
+char time_info[64];
 
 houndLogger logger(0);
 
@@ -72,7 +73,12 @@ bool houndLogger::logAlways(std::wstring text)
 	bool success = (0 == 0);
 
 	try {
-		log_file.write((char*)&text[0], text.size());
+		time_t cur = time(&cur);
+		ctime_s(time_info, sizeof(time_info), &cur);
+		log_file << time_info;
+		const wchar_t* writable_text = text.c_str();
+		log_file << writable_text << std::endl;
+		memset(time_info, 0, sizeof(time_info));
 	}
 	catch (const std::fstream::failure &e) {
 		std::string exception_string = e.what();
@@ -94,11 +100,16 @@ This is the lowest level of error
 bool houndLogger::logError(std::wstring text)
 {
 	bool success = (0 == 0);
-	std::wstring out_text = L"----" + text;
+	std::wstring out_text = L"ERROR ---- " + text;
 
 	if (output_type == 0) {
 		try {
-			log_file.write((char*)&out_text[0], out_text.size());
+			time_t cur = time(&cur);
+			ctime_s(time_info, sizeof(time_info), &cur);
+			log_file << time_info;
+			const wchar_t* writable_text = out_text.c_str();
+			log_file << writable_text << std::endl;
+			memset(time_info, 0, sizeof(time_info));
 		}
 		catch (const std::fstream::failure &e) {
 			std::string exception_string = e.what();
@@ -126,10 +137,15 @@ bool houndLogger::logAlarm(std::wstring text)
 {
 	bool success = (0 == 0);
 
-	std::wstring out_text = L"--------" + text;
+	std::wstring out_text = L"ALARM -------- " + text;
 
 	try {
-		log_file.write((char*)&out_text[0], out_text.size());
+		time_t cur = time(&cur);
+		ctime_s(time_info, sizeof(time_info), &cur);
+		log_file << time_info;
+		const wchar_t* writable_text = out_text.c_str();
+		log_file << writable_text << std::endl;
+		memset(time_info, 0, sizeof(time_info));
 	}
 	catch (const std::fstream::failure &e) {
 		std::string exception_string = e.what();
@@ -153,7 +169,12 @@ bool houndLogger::logInfo(std::wstring text)
 
 	if (output_type == 0) {
 		try {
-			log_file.write((char*)&text[0], text.size());
+			time_t cur = time(&cur);
+			ctime_s(time_info, sizeof(time_info), &cur);
+			log_file << time_info;
+			const wchar_t* writable_text = text.c_str();
+			log_file << writable_text << std::endl;
+			memset(time_info, 0, sizeof(time_info));
 		}
 		catch (const std::fstream::failure &e) {
 			std::string exception_string = e.what();

@@ -73,17 +73,17 @@ int main()
 		bool setup_complete = mainSetup();
 		if (!setup_complete) {
 			DWORD err = GetLastError();
-			logger.logError(L"Failed Dolphin setup with error code: " + err);
+			logger.logError(std::wstring(L"Failed Dolphin setup with error code: " + err));
 			wstring err_msg = parseWinError(err);
-			logger.logError(L" " + err_msg);
+			logger.logError(std::wstring(L" " + err_msg));
 			return onExit(-1);
 		}
 		DWORD pid = pi.dwProcessId;
 
-		logger.logInfo(L"Dolphin PID: " + pid);
+		logger.logInfo(std::wstring(L"Dolphin PID: " + pid));
 
 		//inject DLL
-		logger.logInfo(L"Now injecting Hound_DLL into Dolphin");
+		logger.logInfo(std::wstring(L"Now injecting Hound_DLL into Dolphin"));
 
 		PROCESSENTRY32 pe32 = { sizeof(PROCESSENTRY32) };
 		HANDLE hproc_snap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
@@ -93,17 +93,18 @@ int main()
 		wstring mapfile_name = L"hound_DLL_file_map";
 		HANDLE hmapfile = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, mapfile_name.c_str());
 		if (hmapfile == NULL) {
-			logger.logError(L"Failed opening mapped file: " + parseWinError(GetLastError()));
+			logger.logError(std::wstring(L"Failed opening mapped file: " + parseWinError(GetLastError())));
 			return onExit(-1);
 		}
 		LPCWSTR mapbuf = (LPCWSTR)MapViewOfFile(hmapfile, FILE_MAP_ALL_ACCESS, 0, 0, 256);
 		if (mapbuf == NULL) {
-			logger.logError(L"Failed accessing view of mapped file: " + parseWinError(GetLastError()));
+			logger.logError(std::wstring(L"Failed accessing view of mapped file: " + parseWinError(GetLastError())));
 			return onExit(-1);
 		}
 
-		//setup named pipes
-		//TODO: setup named pipes
+		//NOTE: some other form of IPC may be necessary if mapped memory communication is too difficult/inefficient/etc.
+		//setup Dolphin I/O
+		//TODO: setup Dolphin I/O
 
 		//TODO: continue...
 	}
