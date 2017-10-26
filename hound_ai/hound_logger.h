@@ -25,7 +25,7 @@ public:
 	bool logAlarm(std::wstring text);
 	bool logInfo(std::wstring text);
 	bool logDebug(std::wstring text);
-	std::wstring get_exc_msg(std::string raw_exc_msg);
+	std::wstring norm_to_wide(std::string raw_exc_msg);
 	std::wstring int_to_wstring(int input);
 };
 
