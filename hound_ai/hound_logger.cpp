@@ -7,11 +7,12 @@ Usage:
 
   NOTE: Always, Error, and Alarm modes always also right to console (stdout)
 */
-wchar_t log_file_path[256] = L"C:\\Users\\ap\\Documents\\Projects\\Programs\\logs\\";
+std::wstring log_file_path = L"C:\\Users\\ap\\Documents\\Projects\\Programs\\logs\\";
 int output_type;
 char time_info[64];
 
 houndLogger logger(0);
+std::wstring log_msg(L"");
 
 //Constructor
 houndLogger::houndLogger(int type)
@@ -44,15 +45,14 @@ void houndLogger::initLogger()
 										int_to_wstring(now.tm_year + 1900) + L"-" + 
 										int_to_wstring(now.tm_mon + 1) + L"-" +
 										int_to_wstring(now.tm_mday) + L".txt";
-			const wchar_t* log_filename = log_filename_str.c_str();
-			wcscat_s(log_file_path, log_filename);
+			log_file_path = log_file_path + log_filename_str;
 		}
 		catch (const std::fstream::failure &e) {
 			std::string exception_string = e.what();
 			std::wcerr << norm_to_wide(exception_string) << std::endl;
 
-			std::wcout << "Error opening file\n";
-			std::wcout << "Defaulting to stderr output" << std::endl;
+			std::wcout << L"Error opening file\n";
+			std::wcout << L"Defaulting to stderr output" << std::endl;
 			output_type = 1;
 		}
 	}
@@ -119,8 +119,8 @@ bool houndLogger::logError(std::wstring text)
 			std::string exception_string = e.what();
 			std::wcerr << norm_to_wide(exception_string) << std::endl;
 
-			std::wcerr << "Error writing to file\n";
-			std::wcerr << "Dumping to stderr output" << std::endl;
+			std::wcerr << L"Error writing to file\n";
+			std::wcerr << L"Dumping to stderr output" << std::endl;
 			std::wcerr << text << std::endl;
 			success = (-1 == 0);
 		}
@@ -158,8 +158,8 @@ bool houndLogger::logAlarm(std::wstring text)
 		std::string exception_string = e.what();
 		std::wcerr << norm_to_wide(exception_string) << std::endl;
 
-		std::wcerr << "Error writing to file\n";
-		std::wcerr << "Dumping to stderr output" << std::endl;
+		std::wcerr << L"Error writing to file\n";
+		std::wcerr << L"Dumping to stderr output" << std::endl;
 		std::wcerr << text << std::endl;
 		success = (-1 == 0);
 	}
@@ -214,7 +214,7 @@ std::wstring houndLogger::norm_to_wide(std::string norm_msg)
 {
 	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 	std::wstring wide_msg = converter.from_bytes(norm_msg);
-	std::wstring log_msg = L"Standard exception: " + wide_msg + L"\n";
+	log_msg = L"Standard exception: " + wide_msg + L"\n";
 
 	return log_msg;
 }

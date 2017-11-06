@@ -12,5 +12,6 @@
 #include "hound_logger.h"
 
 extern houndLogger logger;
+extern std::wstring log_msg;
 
 #endif

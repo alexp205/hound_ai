@@ -1,40 +1,42 @@
 #include "hound_DLL_injector.h"
 
 using namespace std;
-void setupInject(wchar_t* DLL_file, wchar_t* proc, DWORD proc_id, PROCESSENTRY32 pe32, HANDLE hproc_snapshot);
+void setupInject(wchar_t* DLL_file, wchar_t* proc, DWORD proc_id, PROCESSENTRY32W pe32, HANDLE hproc_snapshot);
 bool InjectDLL(wchar_t* DLL_file, DWORD proc_id);
-
-wchar_t file_to_inject[256];
-wchar_t proc_name[256];
 
 typedef HINSTANCE(*fpLoadLibrary)(char*);
 
-void setupInject(wchar_t* DLL_file, wchar_t* proc, DWORD proc_id, PROCESSENTRY32 pe32, HANDLE hproc_snapshot)
+void setupInject(wchar_t* DLL_file, wchar_t* proc, DWORD proc_id, PROCESSENTRY32W pe32, HANDLE hproc_snapshot)
 {
 	while (!proc_id) {
-		wstring proc_name_str(proc_name);
-		logger.logInfo(wstring(L"Searching for " + proc_name_str + L"..."));
-		logger.logInfo(wstring(L"Make sure process is running"));
+		wstring proc_name_str(proc);
+		log_msg = L"Searching for " + proc_name_str + L"...";
+		logger.logInfo(log_msg);
+		log_msg = L"Make sure process is running";
+		logger.logInfo(log_msg);
 
-		if (Process32First(hproc_snapshot, &pe32)) {
+		if (Process32FirstW(hproc_snapshot, &pe32)) {
 			do {
-				if (!wcscmp(pe32.szExeFile, proc_name)) {
+				if (!wcscmp(pe32.szExeFile, proc)) {
 					proc_id = pe32.th32ProcessID;
 					break;
 				}
-			} while (Process32Next(hproc_snapshot, &pe32));
+			} while (Process32NextW(hproc_snapshot, &pe32));
 		}
 		Sleep(1000);
 	}
 
 	while (!InjectDLL(DLL_file, proc_id))
 	{
-		logger.logError(wstring(L"DLL failed to inject"));
+		log_msg = L"DLL failed to inject";
+		logger.logError(log_msg);
 		Sleep(1000);
 	}
 
-	logger.logInfo(wstring(L"DLL injected successfully\n"));
-	logger.logInfo(wstring(L"Closing injector in 5 seconds"));
+	log_msg = L"DLL injected successfully\n";
+	logger.logInfo(log_msg);
+	log_msg = L"Closing injector in 5 seconds";
+	logger.logInfo(log_msg);
 }
 
 bool InjectDLL(wchar_t* DLL_file, DWORD proc_id)
@@ -43,9 +45,9 @@ bool InjectDLL(wchar_t* DLL_file, DWORD proc_id)
 	LPVOID param_addr;
 
 	//DLL injection pre-setup
-	HINSTANCE hDLL = LoadLibrary(L"KERNEL32");
+	HINSTANCE hDLL = LoadLibraryW(L"KERNEL32");
 
-	fpLoadLibrary load_library_addr = (fpLoadLibrary)GetProcAddress(hDLL, "LoadLibraryA");
+	fpLoadLibrary load_library_addr = (fpLoadLibrary)GetProcAddress(hDLL, "LoadLibraryW");
 
 	//setup process for injection
 	hproc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, proc_id);

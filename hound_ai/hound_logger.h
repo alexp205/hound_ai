@@ -30,5 +30,6 @@ public:
 };
 
 extern houndLogger logger;
+extern std::wstring log_msg;
 
 #endif
