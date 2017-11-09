@@ -4,7 +4,7 @@ using namespace std;
 //LPCWSTR file_location = TEXT("C:\\Users\\ap\\Documents\\Games\\Emulators\\dolphin-master-5.0-321-x64\\Dolphin-x64\\Dolphin.exe");
 wstring create_proc_command = L"C:\\Users\\ap\\Documents\\Games\\Emulators\\dolphin-master-5.0-321-x64\\Dolphin-x64\\Dolphin.exe -e \"C:\\Users\\ap\\Documents\\Games\\Emulators\\ROMs\\Super Smash Bros. Melee (v1.02).iso\"";
 wstring log_path = L"C:\\Users\\ap\\Documetns\\Projects\\Programs\\logs\\hound_log.txt";
-LPSTARTUPINFOW si;
+STARTUPINFOW si;
 PROCESS_INFORMATION pi;
 
 //Usage:
@@ -36,7 +36,7 @@ bool mainSetup()
 {
 	ZeroMemory(&si, sizeof(si));
 	ZeroMemory(&pi, sizeof(pi));
-	si->cb = sizeof(si);
+	si.cb = sizeof(si);
 	vector<wchar_t> string_converter(create_proc_command.begin(), create_proc_command.end());
 	string_converter.push_back(0);
 
@@ -49,7 +49,7 @@ bool mainSetup()
 		0,
 		NULL,
 		NULL,
-		si,
+		&si,
 		&pi);
 	if (!target_opened) return false;
 
@@ -81,7 +81,7 @@ int main()
 		}
 		DWORD pid = pi.dwProcessId;
 
-		log_msg = L"Dolphin PID: " + pid;
+		log_msg = L"Dolphin PID: " + to_wstring(pid);
 		logger.logInfo(log_msg);
 
 		//inject DLL
@@ -110,6 +110,7 @@ int main()
 		//NOTE: some other form of IPC may be necessary if mapped memory communication is too difficult/inefficient/etc.
 		//setup Dolphin I/O
 		//TODO: setup Dolphin I/O
+
 
 		//TODO: continue...
 	}

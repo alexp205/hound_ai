@@ -49,6 +49,7 @@ void houndLogger::initLogger()
 		}
 		catch (const std::fstream::failure &e) {
 			std::string exception_string = e.what();
+			exception_string = "Standard exception: " + exception_string;
 			std::wcerr << norm_to_wide(exception_string) << std::endl;
 
 			std::wcout << L"Error opening file\n";
@@ -83,6 +84,7 @@ bool houndLogger::logAlways(std::wstring text)
 	}
 	catch (const std::fstream::failure &e) {
 		std::string exception_string = e.what();
+		exception_string = "Standard exception: " + exception_string;
 		std::wcerr << norm_to_wide(exception_string) << std::endl;
 
 		success = (-1 == 0);
@@ -117,6 +119,7 @@ bool houndLogger::logError(std::wstring text)
 		}
 		catch (const std::fstream::failure &e) {
 			std::string exception_string = e.what();
+			exception_string = "Standard exception: " + exception_string;
 			std::wcerr << norm_to_wide(exception_string) << std::endl;
 
 			std::wcerr << L"Error writing to file\n";
@@ -156,6 +159,7 @@ bool houndLogger::logAlarm(std::wstring text)
 	}
 	catch (const std::fstream::failure &e) {
 		std::string exception_string = e.what();
+		exception_string = "Standard exception: " + exception_string;
 		std::wcerr << norm_to_wide(exception_string) << std::endl;
 
 		std::wcerr << L"Error writing to file\n";
@@ -188,6 +192,7 @@ bool houndLogger::logInfo(std::wstring text)
 		}
 		catch (const std::fstream::failure &e) {
 			std::string exception_string = e.what();
+			exception_string = "Standard exception: " + exception_string;
 			std::wcerr << norm_to_wide(exception_string) << std::endl;
 
 			success = (-1 == 0);
@@ -214,7 +219,7 @@ std::wstring houndLogger::norm_to_wide(std::string norm_msg)
 {
 	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 	std::wstring wide_msg = converter.from_bytes(norm_msg);
-	log_msg = L"Standard exception: " + wide_msg + L"\n";
+	log_msg = wide_msg + L"\n";
 
 	return log_msg;
 }
