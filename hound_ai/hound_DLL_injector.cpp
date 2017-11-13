@@ -1,8 +1,5 @@
 #include "hound_DLL_injector.h"
-
 using namespace std;
-void setupInject(wchar_t* DLL_file, wchar_t* proc, DWORD proc_id, PROCESSENTRY32W pe32, HANDLE hproc_snapshot);
-bool InjectDLL(wchar_t* DLL_file, DWORD proc_id);
 
 typedef HINSTANCE(*fpLoadLibrary)(char*);
 
@@ -56,11 +53,11 @@ bool InjectDLL(wchar_t* DLL_file, DWORD proc_id)
 
 	wcscat_s(dll_path, DLL_file);
 
-	param_addr = VirtualAllocEx(hproc, 0, wcslen(dll_path) + 1, MEM_COMMIT, PAGE_READWRITE);
-	bool mem_written = WriteProcessMemory(hproc, param_addr, dll_path, wcslen(dll_path) + 1, NULL);
+	param_addr = VirtualAllocEx(hproc, 0, (wcslen(dll_path) + 1) * sizeof(wchar_t), MEM_COMMIT, PAGE_READWRITE);
+	bool mem_written = WriteProcessMemory(hproc, param_addr, dll_path, (wcslen(dll_path) + 1) * sizeof(wchar_t), NULL);
 
 	//inject DLL
-	CreateRemoteThread(hproc, 0, 0, (LPTHREAD_START_ROUTINE)load_library_addr, param_addr, 0, 0);
+	CreateRemoteThread(hproc, nullptr, 0, LPTHREAD_START_ROUTINE(load_library_addr), param_addr, 0, 0);
 
 	CloseHandle(hproc);
 	

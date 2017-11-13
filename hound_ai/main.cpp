@@ -1,11 +1,23 @@
 #include "main.h"
 using namespace std;
 
+struct SharedData
+{
+	HINSTANCE instance = nullptr;
+	LPDWORD init_fxn = nullptr;
+	DWORD init_offset = 0;
+	LPDWORD status_display_fxn = nullptr;
+	DWORD status_display_offset = 0;
+};
+
 //LPCWSTR file_location = TEXT("C:\\Users\\ap\\Documents\\Games\\Emulators\\dolphin-master-5.0-321-x64\\Dolphin-x64\\Dolphin.exe");
 wstring create_proc_command = L"C:\\Users\\ap\\Documents\\Games\\Emulators\\dolphin-master-5.0-321-x64\\Dolphin-x64\\Dolphin.exe -e \"C:\\Users\\ap\\Documents\\Games\\Emulators\\ROMs\\Super Smash Bros. Melee (v1.02).iso\"";
 wstring log_path = L"C:\\Users\\ap\\Documetns\\Projects\\Programs\\logs\\hound_log.txt";
 STARTUPINFOW si;
 PROCESS_INFORMATION pi;
+SharedData dll_data;
+HANDLE hmapfile = NULL;
+LPVOID mapbuf = NULL;
 
 //Usage:
 // - 0 = success (no errors), follow standard exit procedures
@@ -22,10 +34,16 @@ bool onExit(int exit_status)
 
 	switch (exit_code) {
 	case 0: 
-		//TODO: success procedure here
+		//remove refs to shared memory
+		UnmapViewOfFile(mapbuf);
+		CloseHandle(hmapfile);
+
 		break;
 	case -1: 
-		//TODO: error procedure here
+		//remove refs to shared memory
+		UnmapViewOfFile(mapbuf);
+		CloseHandle(hmapfile);
+
 		break;
 	}
 
@@ -41,14 +59,14 @@ bool mainSetup()
 	string_converter.push_back(0);
 
 	//start Dolphin
-	bool target_opened = CreateProcessW(NULL,
+	bool target_opened = CreateProcessW(nullptr,
 		string_converter.data(),
-		NULL,
-		NULL,
+		nullptr,
+		nullptr,
 		FALSE,
 		0,
-		NULL,
-		NULL,
+		nullptr,
+		nullptr,
 		&si,
 		&pi);
 	if (!target_opened) return false;
@@ -57,6 +75,34 @@ bool mainSetup()
 	CloseHandle(pi.hThread);
 
 	logger.initLogger();
+
+	return true;
+}
+
+bool accessSharedMemory(DWORD proc_id)
+{
+	LPCWSTR mapfile_name = L"Global\\hound_DLL_file_map";
+	hmapfile = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, mapfile_name);
+	if (hmapfile == NULL) {
+		log_msg = L"Failed opening mapped file: " + parseWinError(GetLastError());
+		logger.logError(log_msg);
+		return onExit(-1);
+	}
+
+	mapbuf = MapViewOfFile(hmapfile, FILE_MAP_ALL_ACCESS, 0, 0, 256);
+	if (mapbuf == NULL) {
+		log_msg = L"Failed accessing view of mapped file: " + parseWinError(GetLastError());
+		logger.logError(log_msg);
+		return onExit(-1);
+	}
+
+	memcpy_s(&dll_data, sizeof(SharedData), mapbuf, sizeof(SharedData));
+
+	//DEBUG
+	HANDLE hproc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, proc_id);
+	HANDLE hdebug_dll_fxn = CreateRemoteThread(hproc, nullptr, 0, LPTHREAD_START_ROUTINE(dll_data.init_fxn), nullptr, 0, 0);
+	CloseHandle(hproc);
+	CloseHandle(hdebug_dll_fxn);
 
 	return true;
 }
@@ -93,19 +139,10 @@ int main()
 		setupInject(L"hound_DLL.dll", L"Dolphin.exe", pid, pe32, hproc_snap);
 
 		//access mapped file
-		LPCSTR mapfile_name = "hound_DLL_file_map";
-		HANDLE hmapfile = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, mapfile_name);
-		if (hmapfile == NULL) {
-			log_msg = L"Failed opening mapped file: " + parseWinError(GetLastError());
-			logger.logError(log_msg);
-			return onExit(-1);
-		}
-		LPCWSTR mapbuf = (LPCWSTR)MapViewOfFile(hmapfile, FILE_MAP_ALL_ACCESS, 0, 0, 256);
-		if (mapbuf == NULL) {
-			log_msg = L"Failed accessing view of mapped file: " + parseWinError(GetLastError());
-			logger.logError(log_msg);
-			return onExit(-1);
-		}
+		log_msg = L"Accessing shared memory for DLL data and function locations";
+		logger.logInfo(log_msg);
+
+		accessSharedMemory(pid);
 
 		//NOTE: some other form of IPC may be necessary if mapped memory communication is too difficult/inefficient/etc.
 		//setup Dolphin I/O
