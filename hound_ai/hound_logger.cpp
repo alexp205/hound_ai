@@ -7,7 +7,7 @@ Usage:
 
   NOTE: Always, Error, and Alarm modes always also right to console (stdout)
 */
-std::wstring log_file_path = L"C:\\Users\\ap\\Documents\\Projects\\Programs\\logs\\";
+std::wstring log_file_path = L"C:\\Users\\ap\\Documents\\Projects\\logs\\";
 int output_type;
 char time_info[64];
 
@@ -79,7 +79,7 @@ bool houndLogger::logAlways(std::wstring text)
 		ctime_s(time_info, sizeof(time_info), &cur);
 		std::string time_text(time_info);
 		log_file << norm_to_wide(time_text);
-		log_file << text << std::endl;
+		log_file << text << L"\n" << L"-------------------------------------------------------------------------" << std::endl;
 		memset(time_info, 0, sizeof(time_info));
 	}
 	catch (const std::fstream::failure &e) {
@@ -114,7 +114,7 @@ bool houndLogger::logError(std::wstring text)
 			ctime_s(time_info, sizeof(time_info), &cur);
 			std::string time_text(time_info);
 			log_file << norm_to_wide(time_text);
-			log_file << text;
+			log_file << out_text << L"-------------------------------------------------------------------------" << std::endl;
 			memset(time_info, 0, sizeof(time_info));
 		}
 		catch (const std::fstream::failure &e) {
@@ -124,12 +124,12 @@ bool houndLogger::logError(std::wstring text)
 
 			std::wcerr << L"Error writing to file\n";
 			std::wcerr << L"Dumping to stderr output" << std::endl;
-			std::wcerr << text << std::endl;
+			std::wcerr << out_text << std::endl;
 			success = (-1 == 0);
 		}
 	}
 	else {
-		std::wcerr << text << std::endl;
+		std::wcerr << out_text << std::endl;
 	}
 
 	return success;
@@ -154,7 +154,7 @@ bool houndLogger::logAlarm(std::wstring text)
 		ctime_s(time_info, sizeof(time_info), &cur);
 		std::string time_text(time_info);
 		log_file << norm_to_wide(time_text);
-		log_file << text;
+		log_file << out_text << L"-------------------------------------------------------------------------" << std::endl;
 		memset(time_info, 0, sizeof(time_info));
 	}
 	catch (const std::fstream::failure &e) {
@@ -164,11 +164,11 @@ bool houndLogger::logAlarm(std::wstring text)
 
 		std::wcerr << L"Error writing to file\n";
 		std::wcerr << L"Dumping to stderr output" << std::endl;
-		std::wcerr << text << std::endl;
+		std::wcerr << out_text << std::endl;
 		success = (-1 == 0);
 	}
 
-	std::wcerr << text << std::endl;
+	std::wcerr << out_text << std::endl;
 
 	return success;
 }
@@ -187,7 +187,7 @@ bool houndLogger::logInfo(std::wstring text)
 			ctime_s(time_info, sizeof(time_info), &cur);
 			std::string time_text(time_info);
 			log_file << norm_to_wide(time_text);
-			log_file << text << std::endl;
+			log_file << text << L"\n" << L"-------------------------------------------------------------------------" << std::endl;
 			memset(time_info, 0, sizeof(time_info));
 		}
 		catch (const std::fstream::failure &e) {

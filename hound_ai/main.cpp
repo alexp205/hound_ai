@@ -12,7 +12,7 @@ struct SharedData
 
 //LPCWSTR file_location = TEXT("C:\\Users\\ap\\Documents\\Games\\Emulators\\dolphin-master-5.0-321-x64\\Dolphin-x64\\Dolphin.exe");
 wstring create_proc_command = L"C:\\Users\\ap\\Documents\\Games\\Emulators\\dolphin-master-5.0-321-x64\\Dolphin-x64\\Dolphin.exe -e \"C:\\Users\\ap\\Documents\\Games\\Emulators\\ROMs\\Super Smash Bros. Melee (v1.02).iso\"";
-wstring log_path = L"C:\\Users\\ap\\Documetns\\Projects\\Programs\\logs\\hound_log.txt";
+wstring log_path = L"C:\\Users\\ap\\Documetns\\Projects\\logs\\hound_log.txt";
 STARTUPINFOW si;
 PROCESS_INFORMATION pi;
 SharedData dll_data;
@@ -135,14 +135,16 @@ int main()
 		logger.logInfo(log_msg);
 
 		PROCESSENTRY32W pe32 = { sizeof(PROCESSENTRY32W) };
-		HANDLE hproc_snap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-		setupInject(L"hound_DLL.dll", L"Dolphin.exe", pid, pe32, hproc_snap);
+		//DEBUG
+		setupInject("TestDLL.dll", L"Dolphin.exe", pid, pe32);
+		//setupInject("hound_DLL.dll", L"Dolphin.exe", pid, pe32);
 
 		//access mapped file
 		log_msg = L"Accessing shared memory for DLL data and function locations";
 		logger.logInfo(log_msg);
 
-		accessSharedMemory(pid);
+		//DEBUG
+		//accessSharedMemory(pid);
 
 		//NOTE: some other form of IPC may be necessary if mapped memory communication is too difficult/inefficient/etc.
 		//setup Dolphin I/O
