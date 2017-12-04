@@ -1,0 +1,30 @@
+	LPDWORD status_display_fxn = nullptr;
+	DWORD status_display_offset = 0;
+
+*******************************************************************************
+
+data.status_display_fxn = LPDWORD(GetProcAddress(hDLL, DLL_STATUS_DISPLAY_FXN_NAME));
+data.status_display_offset = DWORD(data.status_display_fxn) - DWORD(data.instance);
+
+*******************************************************************************
+
+//DLL functions
+void WriteStatusMessage(std::string msg)
+{
+	DWORD size;
+	const char* msg_raw = msg.c_str();
+	
+	HANDLE hfile = CreateFileW(LOG_FILE, GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	WriteFile(hfile, msg_raw, (DWORD)(strlen(msg_raw) + 1), &size, NULL);
+	WriteFile(hfile, "\r\n", 2, &size, NULL);
+	CloseHandle(hfile);
+}
+
+*******************************************************************************
+
+//std::string msg = "Setup DLL data and functions...";
+	//WriteStatusMessage(msg);
+
+	//MessageBox(0, L"WOAH!\n", L"YO!", MB_ICONINFORMATION);
+
+	return true;

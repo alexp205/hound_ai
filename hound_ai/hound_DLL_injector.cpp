@@ -35,7 +35,7 @@ void setupInject(char* DLL_file, wchar_t* proc, DWORD proc_id, PROCESSENTRY32W p
 
 	log_msg = L"DLL injected successfully\n";
 	logger.logInfo(log_msg);
-	log_msg = L"Closing injector in 5 seconds";
+	log_msg = L"Closing injector";
 	logger.logInfo(log_msg);
 
 	CloseHandle(hproc_snapshot);
@@ -104,10 +104,9 @@ bool InjectDLL(char* DLL_file, DWORD proc_id)
 		return false;
 	}
 
-	WaitForSingleObject(hthread, INFINITE);
-	DWORD exit_code = 0;
+	DWORD exit_code = WaitForSingleObject(hthread, INFINITE);
 	if (GetExitCodeThread(hthread, &exit_code)) {
-		log_msg = L"General exit code with " + exit_code;
+		log_msg = L"General exit code with " + to_wstring(exit_code);
 		logger.logInfo(log_msg);
 	}
 	else {

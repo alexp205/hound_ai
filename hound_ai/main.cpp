@@ -6,8 +6,6 @@ struct SharedData
 	HINSTANCE instance = nullptr;
 	LPDWORD init_fxn = nullptr;
 	DWORD init_offset = 0;
-	LPDWORD status_display_fxn = nullptr;
-	DWORD status_display_offset = 0;
 };
 
 //LPCWSTR file_location = TEXT("C:\\Users\\ap\\Documents\\Games\\Emulators\\dolphin-master-5.0-321-x64\\Dolphin-x64\\Dolphin.exe");
@@ -101,8 +99,8 @@ bool accessSharedMemory(DWORD proc_id)
 	//DEBUG
 	HANDLE hproc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, proc_id);
 	HANDLE hdebug_dll_fxn = CreateRemoteThread(hproc, nullptr, 0, LPTHREAD_START_ROUTINE(dll_data.init_fxn), nullptr, 0, 0);
-	CloseHandle(hproc);
 	CloseHandle(hdebug_dll_fxn);
+	CloseHandle(hproc);
 
 	return true;
 }
@@ -136,15 +134,15 @@ int main()
 
 		PROCESSENTRY32W pe32 = { sizeof(PROCESSENTRY32W) };
 		//DEBUG
-		setupInject("TestDLL.dll", L"Dolphin.exe", pid, pe32);
-		//setupInject("hound_DLL.dll", L"Dolphin.exe", pid, pe32);
+		//setupInject("TestDLL.dll", L"Dolphin.exe", pid, pe32);
+		setupInject("hound_DLL.dll", L"Dolphin.exe", pid, pe32);
 
 		//access mapped file
 		log_msg = L"Accessing shared memory for DLL data and function locations";
 		logger.logInfo(log_msg);
 
 		//DEBUG
-		//accessSharedMemory(pid);
+		accessSharedMemory(pid);
 
 		//NOTE: some other form of IPC may be necessary if mapped memory communication is too difficult/inefficient/etc.
 		//setup Dolphin I/O
