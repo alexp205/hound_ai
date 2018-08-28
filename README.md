@@ -9,3 +9,5 @@ to learn and play Super Smash Bros Melee.
 - Dolphin
 - TensorFlow
 - OpenAI Gym
+
+NOTE: currently postponed for Street Fighter AI project
